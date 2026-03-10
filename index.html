@@ -75,16 +75,3 @@
   </script>
 </body>
 </html>
-```
-
-Also update your `.vbs` file at `D:\Dropbox\dropboxlocal_handler.vbs` — find this line:
-```
-If Left(path, 15) = "dropboxlocal://" Then
-    path = Mid(path, 16)
-```
-Replace with:
-```
-If Left(path, 16) = "dropboxlocal:///" Then
-    path = Mid(path, 17)
-ElseIf Left(path, 15) = "dropboxlocal://" Then
-    path = Mid(path, 16)
