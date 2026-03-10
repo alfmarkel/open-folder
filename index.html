@@ -67,9 +67,7 @@
       document.body.removeChild(a);
 
       setTimeout(() => {
-        document.getElementById('title').textContent = 'Folder opened';
-        document.getElementById('message').textContent =
-          'Windows Explorer should be open. You can close this tab.';
+        window.close();
       }, 1500);
     }
   </script>
