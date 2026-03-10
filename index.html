@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Opening Folder...</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f5f5f5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 40px 48px;
+      text-align: center;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.1);
+      max-width: 420px;
+    }
+    .icon { font-size: 48px; margin-bottom: 16px; }
+    h2 { margin: 0 0 8px; color: #1a1a1a; font-size: 20px; }
+    p { margin: 0; color: #666; font-size: 14px; line-height: 1.5; }
+    .path {
+      margin-top: 16px;
+      background: #f0f0f0;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-family: monospace;
+      font-size: 12px;
+      color: #444;
+      word-break: break-all;
+    }
+    .error { color: #c0392b; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="icon">📁</div>
+    <h2 id="title">Opening folder...</h2>
+    <p id="message">Click <strong>Open</strong> if your browser asks for permission.</p>
+    <div class="path" id="pathDisplay"></div>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const path = params.get('path');
+
+    if (!path) {
+      document.getElementById('title').textContent = 'No folder specified';
+      document.getElementById('title').className = 'error';
+      document.getElementById('message').textContent = 'This link is missing a folder path parameter.';
+      document.getElementById('pathDisplay').style.display = 'none';
+    } else {
+      // Decode the path (browsers encode spaces etc in query strings)
+      const decodedPath = decodeURIComponent(path);
+      document.getElementById('pathDisplay').textContent = 'D:\\Dropbox\\' + decodedPath.replace(/\//g, '\\');
+
+      // Fire the custom protocol — browser will prompt "Open dropboxlocal?"
+      window.location.href = 'dropboxlocal://' + path;
+
+      // After a short delay, update message in case browser blocked it silently
+      setTimeout(() => {
+        document.getElementById('title').textContent = 'Folder opened';
+        document.getElementById('message').textContent =
+          'Windows Explorer should be open. You can close this tab.';
+      }, 1500);
+    }
+  </script>
+</body>
+</html>
