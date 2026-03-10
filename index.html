@@ -49,21 +49,23 @@
   <script>
     const params = new URLSearchParams(window.location.search);
     const path = params.get('path');
- 
+
     if (!path) {
       document.getElementById('title').textContent = 'No folder specified';
       document.getElementById('title').className = 'error';
       document.getElementById('message').textContent = 'This link is missing a folder path parameter.';
       document.getElementById('pathDisplay').style.display = 'none';
     } else {
-      // Decode the path (browsers encode spaces etc in query strings)
       const decodedPath = decodeURIComponent(path);
       document.getElementById('pathDisplay').textContent = 'D:\\Dropbox\\' + decodedPath.replace(/\//g, '\\');
 
-      // Fire the custom protocol — browser will prompt "Open dropboxlocal?"
-      window.location.href = 'dropboxlocal://' + path;
+      // Use triple-slash to avoid browser parsing path as hostname
+      const a = document.createElement('a');
+      a.href = 'dropboxlocal:///' + path;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
 
-      // After a short delay, update message in case browser blocked it silently
       setTimeout(() => {
         document.getElementById('title').textContent = 'Folder opened';
         document.getElementById('message').textContent =
@@ -73,3 +75,16 @@
   </script>
 </body>
 </html>
+```
+
+Also update your `.vbs` file at `D:\Dropbox\dropboxlocal_handler.vbs` — find this line:
+```
+If Left(path, 15) = "dropboxlocal://" Then
+    path = Mid(path, 16)
+```
+Replace with:
+```
+If Left(path, 16) = "dropboxlocal:///" Then
+    path = Mid(path, 17)
+ElseIf Left(path, 15) = "dropboxlocal://" Then
+    path = Mid(path, 16)
