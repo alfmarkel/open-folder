@@ -49,7 +49,7 @@
   <script>
     const params = new URLSearchParams(window.location.search);
     const path = params.get('path');
-
+ 
     if (!path) {
       document.getElementById('title').textContent = 'No folder specified';
       document.getElementById('title').className = 'error';
